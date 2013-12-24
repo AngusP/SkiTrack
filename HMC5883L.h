@@ -13,6 +13,7 @@ class hmc{
     hmc();
     void init();
     int getMag( char dir );
+    void packet( long mx, long my, long mz, bool printMagnitude );
     
   private:
     int HMC_ADDR;

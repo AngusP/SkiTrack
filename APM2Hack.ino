@@ -6,31 +6,57 @@
  *
 **/
 
+/*
+The other sensors (in addition to the GPS) output NMEA style information.
+HMC5883L Magnetometer:        $MAGNT
+MPU6000 Accel. & Gyro:        $MPUAG
+*/
+
+/* C, B, A LED pins: */
+const int cled = 25;
+const int bled = 26;
+const int aled = 27;
+bool cstate = 0;
+bool bstate = 0;
+bool astate = 0;
+
 
 #include <Wire.h>
+#include <SPI.h>
 #include "HMC5883L.h"
 #include "MPU6000.h"
 #include "MS5611.h"
 #include "MT3329.h"
 
-hmc hmc;
+hmc mag = hmc();
 mpu mpu;
-ms56 ms56;
-mt33 mt33;
+ms56 baro = ms56(40);
+mt33 gps = mt33();
+
+
+long mx;
+long my;
+long mz;
  
 void setup() {
   
+  SPI.begin();
+
+  /* Baud matched o MT3329 rate */
   Serial.begin(38400);
   
-  hmc.init();
+  mag.init();
   mpu.init();
-  ms56.init();
-  mt33.init();
+  baro.init();
+  gps.init();
   
-  mt33.rate(4);
+  /* 4Hz refresh */
+  gps.rate(4);
 
-  pinMode(27, OUTPUT);
-  digitalWrite(27, HIGH);
+  /* Notification LEDs */
+  pinMode(cled, OUTPUT);
+  pinMode(bled, OUTPUT);
+  pinMode(aled, OUTPUT);
   
 }
 
@@ -41,23 +67,21 @@ void loop() {
   /* Record GPS data when available:
   while( Serial1.available() ){
     Serial.write(Serial1.read());
+    cstate = !cstate;
+    digitalWrite(cled, cstate);
   }*/
 
-  /* Every second send the magnetometer values
+  /* Every second send the magnetometer values */
   if(millis() % 1000 == 0){
     
-    long mx = hmc.getMag('x');
-    long my = hmc.getMag('y');
-    long mz = hmc.getMag('z');
-    unsigned long mv = sqrt( sq(mx) + sq(my) + sq(mz) );
-    
-    Serial.print(mx);
-    Serial.print(",");
-    Serial.print(my);
-    Serial.print(",");
-    Serial.print(mz);
-    Serial.print(",");
-    Serial.println(mv);
-    }*/
+    astate = !astate;
+    digitalWrite(aled, astate);
 
+    mx = mag.getMag('x');
+    my = mag.getMag('y');
+    mz = mag.getMag('z');
+    
+    /* Sends the data over Serial */
+    mag.packet(mx,my,mz,false);
+  }
 }

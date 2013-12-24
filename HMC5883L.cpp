@@ -72,3 +72,23 @@ int hmc::getMag( char dir ){
   }
   
 }
+
+
+
+void hmc::packet( long mx, long my, long mz, bool printMagnitude ){
+  
+  Serial.print("$MAGNT,");
+  Serial.print(mx);
+  Serial.print(",");
+  Serial.print(my);
+  Serial.print(",");
+  Serial.print(mz);
+  if( printMagnitude ){
+    unsigned long mv = sqrt( sq(mx) + sq(my) + sq(mz) ); 
+    Serial.print(",");
+    Serial.print(mv);
+  }
+  
+  Serial.print("\r\n");
+  
+}
