@@ -19,3 +19,22 @@ void mt33::init() {
   /* Put the MT3329 GPS into NMEA Sentence mode: */
   Serial1.print("$PGCMD,16,1,1,1,1,1*6B\r\n");
 }
+
+void mt33::rate(int rate){
+  
+  RATE = rate;
+
+  switch (RATE) {
+    case 10:
+      /* 10Hz */
+      Serial1.println("$PMTK220,250*29");
+      break;
+    case 4:
+      /* 4Hz */
+      Serial1.println("$PMTK220,250*29");
+    break;
+    default:
+      /* 1Hz */
+      Serial1.println("$PMTK220,1000*1F");
+    }
+}

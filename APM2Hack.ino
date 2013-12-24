@@ -27,6 +27,8 @@ void setup() {
   ms56.init();
   mt33.init();
   
+  mt33.rate(4);
+
   pinMode(27, OUTPUT);
   digitalWrite(27, HIGH);
   
@@ -38,10 +40,8 @@ void loop() {
 
   /* Record GPS data when available:
   while( Serial1.available() ){
-    // Pass the serial data from the GPS through to the serial port
     Serial.write(Serial1.read());
-  }
-  */
+  }*/
 
   /* Every second send the magnetometer values
   if(millis() % 1000 == 0){
