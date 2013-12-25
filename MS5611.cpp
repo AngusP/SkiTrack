@@ -51,6 +51,33 @@ void ms56::init() {
 }
 
 
+void ms56::calculate() {
+  int32_t dT;
+  int64_t T;
+  int64_t OFF;
+  int64_t SENS;
+  int64_t P;
+
+  // Formulas from manufacturer datasheet
+  // Define parameters as 64 bits to prevent overflow on operations
+  dT = RT-(C5*256);
+  T = 2000 + (dT * C6)/8388608;
+  OFF = C2 * 65536 + (C4 * dT ) / 128; 
+  SENS = C1 * 32768 + (C3 * dT) / 256;
+
+  /*
+  if (T < 2000) {   // second order temperature compensation
+    int64_t T2 = (int64_t)dT*dT / 2147483648;
+    int64_t Aux_64 = (T-2000)*(T-2000);
+    int64_t OFF2 = 5*Aux_64/2;
+    int64_t SENS2 = 5*Aux_64/4;
+    T = T - T2;
+    OFF = OFF - OFF2;
+    SENS = SENS - SENS2;
+    }*/
+  
+  P = (RP*SENS/2097152 - OFF)/32768;
+}
 
 
 float ms56::altitude(int32_t pressure) {
@@ -76,7 +103,7 @@ uint8_t ms56::read()
       D2=ms56::readADC();   // On state 1 we read temp
       RT = D2;
       STATE++;
-      ms56::write(MS5611_CMD_D1 + MS5611_OSR_4096);  // Command to read temperature
+      ms56::write(MS5611_CMD_D1 + MS5611_OSR_4096);  // Command to read pressure
       TIMER = millis();
     }
   }else{
@@ -167,6 +194,12 @@ int32_t ms56::getPressure() {
 }
 int32_t ms56::getTemperature() {
   return T;
+}
+uint32_t ms56::getRawPressure() {
+  return RP;
+}
+uint32_t ms56::getRawTemperature() {
+  return RT;
 }
 
 

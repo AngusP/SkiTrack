@@ -72,6 +72,8 @@ class ms56 {
     int32_t temperature();
     int32_t getPressure();
     int32_t getTemperature();
+    uint32_t getRawPressure();
+    uint32_t getRawTemperature();
     float altitude( int32_t pressure );
     uint32_t readADC();
     uint16_t read16Bits(byte reg);
@@ -85,19 +87,22 @@ class ms56 {
     
     uint32_t D1;    // Digital pressure value
     uint32_t D2;    // Digital temperature value
-    int16_t C1;     // SENS t1    -- Pressure sensitivity
-    int16_t C2;     // OFF t1     -- Pressure offset
-    int16_t C3;     // TCS        -- Temperature coefficient of pressure sensitivity
-    int16_t C4;     // TCO        -- Temperature coefficient of pressure offset
-    int16_t C5;     // Tref       -- Reference temperature
-    int16_t C6;     // TEMPSENS   -- Temperature coefficient of the temerature
+    uint16_t C1;    // SENS t1    -- Pressure sensitivity
+    uint16_t C2;    // OFF t1     -- Pressure offset
+    uint16_t C3;    // TCS        -- Temperature coefficient of pressure sensitivity
+    uint16_t C4;    // TCO        -- Temperature coefficient of pressure offset
+    uint16_t C5;    // Tref       -- Reference temperature
+    uint16_t C6;    // TEMPSENS   -- Temperature coefficient of the temerature
+
     int32_t dT;     // Difference between reference and actual temperature
-    int32_t T;      // The Temperature
+    int64_t T;      // The Temperature
     uint32_t RT;    // Raw temperature
-    int32_t T2;     // Temperature compensation
+    int64_t T2;     // Temperature compensation
     int64_t OFF;    // Offset at actual temperature
+    int64_t OFF2;   // Compensation value
     int64_t SENS;   // Sensitivity at actual temperature
-    int32_t P;      // The Pressure
+    int64_t SENS2;  // Compensation value
+    int64_t P;      // The Pressure
     uint32_t RP;    // Raw pressure
   
 };

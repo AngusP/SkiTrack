@@ -8,8 +8,9 @@
 
 /*
 The other sensors (in addition to the GPS) output NMEA style information.
-HMC5883L Magnetometer:        $MAGNT
-MPU6000 Accel. & Gyro:        $MPUAG
+HMC5883L Magnetometer:              $MAGNT
+MPU6000 Accel. & Gyro:              $MPUAG
+MS5611 Calibration constants:       $BARCS
 */
 
 /* C, B, A LED pins: */
@@ -33,7 +34,6 @@ mpu mpu;
 ms56 baro = ms56(40);
 mt33 gps = mt33();
 
-
 long mx;
 long my;
 long mz;
@@ -42,7 +42,7 @@ void setup() {
   
   SPI.begin();
 
-  /* Baud matched o MT3329 rate */
+  /* Baud matched with MT3329 rate */
   Serial.begin(38400);
   
   mag.init();
@@ -50,8 +50,8 @@ void setup() {
   baro.init();
   gps.init();
   
-  /* 4Hz refresh */
-  gps.rate(4);
+  /* Output frequency in Hz {1,4,10} */
+  gps.rate(1);
 
   /* Notification LEDs */
   pinMode(cled, OUTPUT);
@@ -59,9 +59,15 @@ void setup() {
   pinMode(aled, OUTPUT);
 
   baro.reset();
+  delay(20);
+
   digitalWrite(cled, LOW);
   
+  baro.printConsts();
+  
 }
+
+
 
 void loop() {
 
@@ -80,7 +86,16 @@ void loop() {
     astate = !astate;
     digitalWrite(aled, astate);
 
-    baro.altitude(4000);
+    baro.read();
+
+    Serial.print("RP: ");
+    Serial.print(baro.getRawPressure());
+    Serial.print(", RT:");
+    Serial.print(baro.getRawTemperature());
+    Serial.print(", P:");
+    Serial.print(baro.getPressure());
+    Serial.print(", T:");
+    Serial.println(baro.getTemperature());
 
     /*mx = mag.getMag('x');
     my = mag.getMag('y');
