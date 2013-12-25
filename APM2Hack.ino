@@ -57,6 +57,9 @@ void setup() {
   pinMode(cled, OUTPUT);
   pinMode(bled, OUTPUT);
   pinMode(aled, OUTPUT);
+
+  baro.reset();
+  digitalWrite(cled, LOW);
   
 }
 
@@ -73,15 +76,17 @@ void loop() {
 
   /* Every second send the magnetometer values */
   if(millis() % 1000 == 0){
-    
+
     astate = !astate;
     digitalWrite(aled, astate);
 
-    mx = mag.getMag('x');
+    baro.printConsts();
+
+    /*mx = mag.getMag('x');
     my = mag.getMag('y');
     mz = mag.getMag('z');
-    
+    */
     /* Sends the data over Serial */
-    mag.packet(mx,my,mz,false);
+    //mag.packet(mx,my,mz,false);
   }
 }

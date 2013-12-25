@@ -61,7 +61,10 @@ class ms56 {
     void write(byte reg);
     int32_t calcTemp( uint32_t rawTemp, int16_t C5, int16_t C6 );
     void reset();
-  
+    uint32_t readADC();
+    uint16_t read16Bits(byte reg);
+    void printConsts();
+
   private:
     int CS_PIN;
     
