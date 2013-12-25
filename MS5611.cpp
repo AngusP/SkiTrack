@@ -23,10 +23,14 @@ ms56::ms56(int cs_pin){
 
 }
 
+
+
 void ms56::init() {
   /* Set the SPI clock speed to high = 8MHz. Default SPI_CLOCK_DIV4 = 4MHz */
   SPI.setClockDivider( SPI_CLOCK_DIV2 );
-  
+  delay(5);
+
+  ms56::reset();
   delay(5);
   
   /* Read the constants from the PROM: */
@@ -38,23 +42,76 @@ void ms56::init() {
   C5 = ms56::read16Bits(MS5611_CMD_PROM_READ_C5);
   C6 = ms56::read16Bits(MS5611_CMD_PROM_READ_C6);
 
+  ms56::write(MS5611_CMD_D2 + MS5611_OSR_4096);
+  TIMER = millis();
+  STATE = 1;
+  T = 0;
+  P = 0;
+
 }
 
 
-int32_t ms56::calcTemp( uint32_t rawTemp, int16_t C5, int16_t C6 ){
-  
-  int32_t dT, TEMP;
-  int64_t T2 = 0;
 
-  dT = rawTemp - (C5 * 256);
-  TEMP = 2000 + dT * (C6 / 8388608);
-  
-  if(TEMP < 2000){
-    T2 = sq(dT) / 2147483648;
+
+float ms56::altitude(int32_t pressure) {
+
+  float tmp_float;
+  float altitude;
+
+  tmp_float = (pressure / 101325.0);
+  tmp_float = pow(tmp_float, 0.190295);
+  altitude = 44330 * (1.0 - tmp_float);
+
+  return altitude;
+}
+
+
+
+uint8_t ms56::read()
+{
+  uint8_t result = 0;
+
+  if (STATE == 1){
+    if (ms56::ready()){
+      D2=ms56::readADC();   // On state 1 we read temp
+      RT = D2;
+      STATE++;
+      ms56::write(MS5611_CMD_D1 + MS5611_OSR_4096);  // Command to read temperature
+      TIMER = millis();
+    }
+  }else{
+    if (STATE == 5){
+      if (ms56::ready()){
+	D1=ms56::readADC();
+	RP = D1;
+	ms56::calculate();
+	STATE = 1;                // Start again from state = 1
+	ms56::write(MS5611_CMD_D2 + MS5611_OSR_4096);// Command to read temperature
+	TIMER = millis();
+	result = 1;                // New pressure reading
+      }
+    }else{
+      if (ms56::ready()){
+	D1=ms56::readADC();
+	RP = D1;
+	ms56::calculate();
+	STATE++;
+	ms56::write(MS5611_CMD_D1 + MS5611_OSR_4096);  // Command to read pressure
+	TIMER = millis();
+	result = 1;               // New pressure reading
+      }
+    }
   }
+  return(result);
+}
 
-  return (TEMP - T2);
 
+bool ms56::ready() {
+  if( millis() - TIMER > 10 ){
+    return true;
+  } else {
+    return false;
+  }
 }
 
 
@@ -102,6 +159,14 @@ uint16_t ms56::read16Bits(byte reg) {
   digitalWrite(CS_PIN, HIGH);
   return_value = ((uint16_t)byteH<<8) | (byteL);
   return(return_value);
+}
+
+
+int32_t ms56::getPressure() {
+  return P;
+}
+int32_t ms56::getTemperature() {
+  return T;
 }
 
 

@@ -6,6 +6,12 @@
 
 #include "Arduino.h"
 #include <SPI.h>
+#include <math.h>
+
+/*
+  NOTE:
+A double is the same as int32_t
+*/
 
 /* Command set. See Datasheet. */
 #define MS5611_CMD_RESET               0x1E
@@ -59,14 +65,23 @@ class ms56 {
     ms56(int cs_pin);
     void init();
     void write(byte reg);
-    int32_t calcTemp( uint32_t rawTemp, int16_t C5, int16_t C6 );
-    void reset();
+    uint8_t read();
+    bool ready();
+    int32_t pressure();
+    void calculate();
+    int32_t temperature();
+    int32_t getPressure();
+    int32_t getTemperature();
+    float altitude( int32_t pressure );
     uint32_t readADC();
     uint16_t read16Bits(byte reg);
     void printConsts();
+    void reset();
 
   private:
     int CS_PIN;
+    uint8_t STATE;
+    uint32_t TIMER;
     
     uint32_t D1;    // Digital pressure value
     uint32_t D2;    // Digital temperature value
@@ -77,10 +92,12 @@ class ms56 {
     int16_t C5;     // Tref       -- Reference temperature
     int16_t C6;     // TEMPSENS   -- Temperature coefficient of the temerature
     int32_t dT;     // Difference between reference and actual temperature
-    int32_t TEMP;   // The Temperature
+    int32_t T;      // The Temperature
+    uint32_t RT;    // Raw temperature
     int32_t T2;     // Temperature compensation
     int64_t OFF;    // Offset at actual temperature
     int64_t SENS;   // Sensitivity at actual temperature
     int32_t P;      // The Pressure
+    uint32_t RP;    // Raw pressure
   
 };

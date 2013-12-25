@@ -80,7 +80,7 @@ void loop() {
     astate = !astate;
     digitalWrite(aled, astate);
 
-    baro.printConsts();
+    baro.altitude(4000);
 
     /*mx = mag.getMag('x');
     my = mag.getMag('y');
