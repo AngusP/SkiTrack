@@ -24,8 +24,12 @@ ms56::ms56(int cs_pin){
 }
 
 
+/*
+NB: SPI bus must be initialised externally.
+*/
 
 void ms56::init() {
+  
   /* Set the SPI clock speed to high = 8MHz. Default SPI_CLOCK_DIV4 = 4MHz */
   SPI.setClockDivider( SPI_CLOCK_DIV2 );
   delay(5);
@@ -45,38 +49,31 @@ void ms56::init() {
   ms56::write(MS5611_CMD_D2 + MS5611_OSR_4096);
   TIMER = millis();
   STATE = 1;
-  T = 0;
-  P = 0;
+  T = 2000;
+  P = 101500;
+
+  dT = 0;
+  OFF = 0;
+  SENS = 0;
 
 }
 
 
 void ms56::calculate() {
-  int32_t dT;
-  int64_t T;
-  int64_t OFF;
-  int64_t SENS;
-  int64_t P;
 
-  // Formulas from manufacturer datasheet
-  // Define parameters as 64 bits to prevent overflow on operations
-  dT = RT-(C5*256);
-  T = 2000 + (dT * C6)/8388608;
-  OFF = C2 * 65536 + (C4 * dT ) / 128; 
-  SENS = C1 * 32768 + (C3 * dT) / 256;
+  dT = RT - (C5*256);
+  T = 2000 + (dT * C6) / pow(2,23);
 
-  /*
-  if (T < 2000) {   // second order temperature compensation
-    int64_t T2 = (int64_t)dT*dT / 2147483648;
-    int64_t Aux_64 = (T-2000)*(T-2000);
-    int64_t OFF2 = 5*Aux_64/2;
-    int64_t SENS2 = 5*Aux_64/4;
+  OFF = (C2 * pow(2,17)) + ((C4 * dT)/pow(2,6));
+
+  SENS = (C1 * pow(2,16)) + ((C3 * dT)/pow(2,7));
+
+  /*if (T < 2000) {
+    int64_t T2 = (dT * dT) / 2147483648;
     T = T - T2;
-    OFF = OFF - OFF2;
-    SENS = SENS - SENS2;
-    }*/
-  
-  P = (RP*SENS/2097152 - OFF)/32768;
+  }*/
+
+  P = ((((RP * SENS) / pow(2,21)) - OFF) / pow(2,16));
 }
 
 

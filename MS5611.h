@@ -85,24 +85,22 @@ class ms56 {
     uint8_t STATE;
     uint32_t TIMER;
     
-    uint32_t D1;    // Digital pressure value
-    uint32_t D2;    // Digital temperature value
-    uint16_t C1;    // SENS t1    -- Pressure sensitivity
-    uint16_t C2;    // OFF t1     -- Pressure offset
-    uint16_t C3;    // TCS        -- Temperature coefficient of pressure sensitivity
-    uint16_t C4;    // TCO        -- Temperature coefficient of pressure offset
-    uint16_t C5;    // Tref       -- Reference temperature
-    uint16_t C6;    // TEMPSENS   -- Temperature coefficient of the temerature
+    uint32_t  D1;    // Digital pressure value
+    uint32_t  D2;    // Digital temperature value
+    uint16_t  C1;    // SENS t1    -- Pressure sensitivity
+    uint16_t  C2;    // OFF t1     -- Pressure offset
+    uint16_t  C3;    // TCS        -- Temperature coefficient of pressure sensitivity
+    uint16_t  C4;    // TCO        -- Temperature coefficient of pressure offset
+    uint16_t  C5;    // Tref       -- Reference temperature
+    uint16_t  C6;    // TEMPSENS   -- Temperature coefficient of the temerature
 
-    int32_t dT;     // Difference between reference and actual temperature
-    int64_t T;      // The Temperature
-    uint32_t RT;    // Raw temperature
-    int64_t T2;     // Temperature compensation
-    int64_t OFF;    // Offset at actual temperature
-    int64_t OFF2;   // Compensation value
-    int64_t SENS;   // Sensitivity at actual temperature
-    int64_t SENS2;  // Compensation value
-    int64_t P;      // The Pressure
-    uint32_t RP;    // Raw pressure
+    int32_t   dT;    // Difference between reference and actual temperature
+    int64_t   T;     // The Temperature
+    uint32_t  RT;    // Raw temperature
+    int64_t   T2;    // Temperature compensation
+    int64_t  OFF;    // Offset at actual temperature
+    int64_t   SENS;  // Sensitivity at actual temperature
+    int64_t   P;     // The Pressure
+    uint32_t  RP;    // Raw pressure
   
 };
