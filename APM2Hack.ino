@@ -86,7 +86,7 @@ void loop() {
     astate = !astate;
     digitalWrite(aled, astate);
 
-    baro.read();
+    /*baro.read();
 
     Serial.print("RP: ");
     Serial.print(baro.getRawPressure());
@@ -95,7 +95,14 @@ void loop() {
     Serial.print(", P:");
     Serial.print(baro.getPressure());
     Serial.print(", T:");
-    Serial.println(baro.getTemperature());
+    Serial.println(baro.getTemperature());*/
+
+    Serial.print("AX:");
+    Serial.print(mpu.getAX());
+    Serial.print(", AY:");
+    Serial.print(mpu.getAY());
+    Serial.print(", AZ:");
+    Serial.println(mpu.getAZ());
 
     /*mx = mag.getMag('x');
     my = mag.getMag('y');
