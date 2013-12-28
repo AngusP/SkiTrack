@@ -10,6 +10,7 @@
 The other sensors (in addition to the GPS) output NMEA style information.
 HMC5883L Magnetometer:              $MAGNT
 MPU6000 Accel. & Gyro:              $MPUAG
+MS5611 Barometer & Thermometer:     $BAROT
 MS5611 Calibration constants:       $BARCS
 */
 
@@ -71,14 +72,12 @@ void setup() {
 
 void loop() {
 
-  
-
-  /* Record GPS data when available:
+  /* Record GPS data when available: */
   while( Serial1.available() ){
     Serial.write(Serial1.read());
     cstate = !cstate;
     digitalWrite(cled, cstate);
-  }*/
+  }
 
   /* Every second send the magnetometer values */
   if(millis() % 1000 == 0){
@@ -86,29 +85,18 @@ void loop() {
     astate = !astate;
     digitalWrite(aled, astate);
 
-    /*baro.read();
-
-    Serial.print("RP: ");
-    Serial.print(baro.getRawPressure());
-    Serial.print(", RT:");
-    Serial.print(baro.getRawTemperature());
-    Serial.print(", P:");
+    baro.read();
+    Serial.print("$BAROT,");
     Serial.print(baro.getPressure());
-    Serial.print(", T:");
-    Serial.println(baro.getTemperature());*/
+    Serial.print(",");
+    Serial.println(baro.getTemperature());
 
-    Serial.print("AX:");
-    Serial.print(mpu.getAX());
-    Serial.print(", AY:");
-    Serial.print(mpu.getAY());
-    Serial.print(", AZ:");
-    Serial.println(mpu.getAZ());
+    mpu.read();
+    mpu.packet();
 
-    /*mx = mag.getMag('x');
+    mx = mag.getMag('x');
     my = mag.getMag('y');
     mz = mag.getMag('z');
-    */
-    /* Sends the data over Serial */
-    //mag.packet(mx,my,mz,false);
+    mag.packet(mx,my,mz,false);
   }
 }

@@ -45,7 +45,43 @@ void mpu::init() {
 }
 
 
-uint8_t mpu::read( byte reg ) {
+void mpu::read() {
+  uint8_t reg_msb, reg_lsb;
+  
+  /* Accelerometer: */
+  reg_msb = mpu::readReg( MPU6000_ACCX_MSB );
+  reg_lsb = mpu::readReg( MPU6000_ACCX_LSB );
+  accx = reg_msb<<8|reg_lsb;
+
+  reg_msb = mpu::readReg( MPU6000_ACCY_MSB );
+  reg_lsb = mpu::readReg( MPU6000_ACCY_LSB );
+  accy = reg_msb<<8|reg_lsb;
+
+  reg_msb = mpu::readReg( MPU6000_ACCZ_MSB );
+  reg_lsb = mpu::readReg( MPU6000_ACCZ_LSB );
+  accz = reg_msb<<8|reg_lsb;
+
+  /* Gyroscope: */
+  reg_msb = mpu::readReg( MPU6000_GYRX_MSB );
+  reg_lsb = mpu::readReg( MPU6000_GYRX_LSB );
+  gyrx = reg_msb<<8|reg_lsb;
+
+  reg_msb = mpu::readReg( MPU6000_GYRY_MSB );
+  reg_lsb = mpu::readReg( MPU6000_GYRY_LSB );
+  gyry = reg_msb<<8|reg_lsb;
+
+  reg_msb = mpu::readReg( MPU6000_GYRZ_MSB );
+  reg_lsb = mpu::readReg( MPU6000_GYRZ_LSB );
+  gyrz = reg_msb<<8|reg_lsb;
+
+  /* Thermometer: */
+  reg_msb = mpu::readReg( MPU6000_TEMP_MSB );
+  reg_lsb = mpu::readReg( MPU6000_TEMP_LSB );
+  temp = reg_msb<<8|reg_lsb;
+}
+
+
+uint8_t mpu::readReg( byte reg ) {
   uint8_t dump;
   uint8_t return_value;
   uint8_t addr = reg|0x80;
@@ -67,27 +103,28 @@ void mpu::write( byte reg, byte data ) {
 }
 
 
-int16_t mpu::getAX() {
-  uint8_t accx_msb = mpu::read( MPU6000_ACCX_MSB );
-  uint8_t accx_lsb = mpu::read( MPU6000_ACCX_LSB );
-  accx = accx_msb<<8|accx_lsb;
-  return accx;
+void mpu::packet() {
+  Serial.print("$MPUAG,");
+  Serial.print(mpu::getAX());
+  Serial.print(",");
+  Serial.print(mpu::getAY());
+  Serial.print(",");
+  Serial.print(mpu::getAZ());
+  Serial.print(",");
+  Serial.print(mpu::getGX());
+  Serial.print(",");
+  Serial.print(mpu::getGY());
+  Serial.print(",");
+  Serial.print(mpu::getGZ());
+  Serial.print(",");
+  Serial.print(mpu::getTemp());
+  Serial.print("\r\n");
 }
 
-int16_t mpu::getAY() {
-  uint8_t accy_msb = mpu::read( MPU6000_ACCY_MSB );
-  uint8_t accy_lsb = mpu::read( MPU6000_ACCY_LSB );
-  accy = accy_msb<<8|accy_lsb;
-  return accy;
-}
 
-int16_t mpu::getAZ() {
-  uint8_t accz_msb = mpu::read( MPU6000_ACCZ_MSB );
-  uint8_t accz_lsb = mpu::read( MPU6000_ACCZ_LSB );
-  accz = accz_msb<<8|accz_lsb;
-  return accz;
-}
-
+int16_t mpu::getAX() { return accx; }
+int16_t mpu::getAY() { return accy; }
+int16_t mpu::getAZ() { return accz; }
 
 int16_t mpu::getGX() { return gyrx; }
 int16_t mpu::getGY() { return gyry; }

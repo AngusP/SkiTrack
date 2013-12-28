@@ -36,8 +36,10 @@ class mpu {
   public:
     mpu();
     void init();
-    uint8_t read( byte reg );
+    void read();
+    uint8_t readReg( byte reg );
     void write( byte reg, byte data );
+    void packet();
 
     int16_t getAX();
     int16_t getAY();
