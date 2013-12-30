@@ -29,11 +29,6 @@ NB: SPI bus must be initialised externally.
 */
 
 void ms56::init() {
-  
-  /* Set the SPI clock speed to high = 8MHz. Default SPI_CLOCK_DIV4 = 4MHz */
-  SPI.setClockDivider( SPI_CLOCK_DIV2 );
-  delay(5);
-
   ms56::reset();
   delay(5);
   
@@ -77,12 +72,12 @@ void ms56::calculate() {
 }
 
 
-float ms56::altitude(int32_t pressure) {
+float ms56::altitude() {
 
   float tmp_float;
   float altitude;
 
-  tmp_float = (pressure / 101325.0);
+  tmp_float = (P / 101325.0);
   tmp_float = pow(tmp_float, 0.190295);
   altitude = 44330 * (1.0 - tmp_float);
 
@@ -197,6 +192,17 @@ uint32_t ms56::getRawPressure() {
 }
 uint32_t ms56::getRawTemperature() {
   return RT;
+}
+
+
+void ms56::stream() {
+  Serial.write(0x42);
+  Serial.write(0x00);
+  Serial.write((long)P);
+  Serial.write(0x00);
+  Serial.write((long)T);
+  Serial.write(0x00);
+  Serial.print("\r\n");
 }
 
 

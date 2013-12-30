@@ -83,6 +83,19 @@ int hmc::getMag( char dir ){
 }
 
 
+void hmc::stream() {
+  Serial.write(0x40);
+  Serial.write(0x00);
+  Serial.write(mx);
+  Serial.write(0x00);
+  Serial.write(0x00);
+  Serial.write(my);
+  Serial.write(0x00);
+  Serial.write(mz);
+  Serial.write(0x00);
+  Serial.print("\r\n");
+}
+
 
 void hmc::packet(){
   

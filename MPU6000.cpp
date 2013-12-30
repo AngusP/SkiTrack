@@ -3,6 +3,9 @@
  *                          SOURCE FILE
  */
 
+// Accelerometer: 1G ~= 16258
+
+
 
 #include "MPU6000.h"
 
@@ -103,21 +106,40 @@ void mpu::write( byte reg, byte data ) {
 }
 
 
+void mpu::stream() {
+  Serial.write(0x41);
+  Serial.write(0x00);
+  Serial.write(accx);
+  Serial.write(0x00);
+  Serial.write(accy);
+  Serial.write(0x00);
+  Serial.write(accz);
+  Serial.write(0x00);
+  Serial.write(gyrx);
+  Serial.write(0x00);
+  Serial.write(gyry);
+  Serial.write(0x00);
+  Serial.write(gyrz);
+  Serial.write(0x00);
+  Serial.print("\r\n");
+}
+
+
 void mpu::packet() {
   Serial.print("$MPUAG,");
-  Serial.print(mpu::getAX());
+  Serial.print(accx);
   Serial.print(",");
-  Serial.print(mpu::getAY());
+  Serial.print(accy);
   Serial.print(",");
-  Serial.print(mpu::getAZ());
+  Serial.print(accz);
   Serial.print(",");
-  Serial.print(mpu::getGX());
+  Serial.print(gyrx);
   Serial.print(",");
-  Serial.print(mpu::getGY());
+  Serial.print(gyry);
   Serial.print(",");
-  Serial.print(mpu::getGZ());
-  Serial.print(",");
-  Serial.print(mpu::getTemp());
+  Serial.print(gyrz);
+  /*Serial.print(",");
+    Serial.print(temp);*/
   Serial.print("\r\n");
 }
 

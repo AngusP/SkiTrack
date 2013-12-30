@@ -8,10 +8,17 @@
 
 /*
 The other sensors (in addition to the GPS) output NMEA style information.
-HMC5883L Magnetometer:              $MAGNT
-MPU6000 Accel. & Gyro:              $MPUAG
-MS5611 Barometer & Thermometer:     $BAROT
-MS5611 Calibration constants:       $BARCS
+HMC5883L Magnetometer:              $MAGNT,mx,my,mz
+MPU6000 Accel. & Gyro:              $MPUAG,ax,ay,az,gx,gy,gz,t
+MS5611 Barometer & Thermometer:     $BAROT,p,t
+MS5611 Calibration constants:       $BARCS,C1,C2,C3,C4,C5,C6
+
+They also have a Hex based serial stream:
+HMC5883L Magnetometer:              0x40
+MPU6000 Accel. & Gyro               0x41
+MS5611 Barometer & Thermometer:     0x42
+
+Stream is delimited by 0x00 nstead of ','
 */
 
 /* C, B, A LED pins: */
@@ -42,9 +49,12 @@ long mz;
 void setup() {
   
   SPI.begin();
+  SPI.setClockDivider( SPI_CLOCK_DIV16 ); //1 MHz
+  delay(5);
+  SPI.setBitOrder(MSBFIRST);
 
-  /* Baud matched with MT3329 rate */
-  Serial.begin(38400);
+  /* Baud higher than MT3329 rate */
+  Serial.begin(115200);
   
   mag.init();
   mpu.init();
@@ -52,7 +62,7 @@ void setup() {
   gps.init();
   
   /* Output frequency in Hz {1,4,10} */
-  gps.rate(1);
+  gps.rate(4);
 
   /* Notification LEDs */
   pinMode(cled, OUTPUT);

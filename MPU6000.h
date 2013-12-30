@@ -39,6 +39,7 @@ class mpu {
     void read();
     uint8_t readReg( byte reg );
     void write( byte reg, byte data );
+    void stream();
     void packet();
 
     int16_t getAX();

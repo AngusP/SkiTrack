@@ -74,10 +74,11 @@ class ms56 {
     int64_t getTemperature();
     uint32_t getRawPressure();
     uint32_t getRawTemperature();
-    float altitude( int32_t pressure );
+    float altitude();
     uint32_t readADC();
     uint16_t read16Bits(byte reg);
     void printConsts();
+    void stream();
     void packet();
     void reset();
 

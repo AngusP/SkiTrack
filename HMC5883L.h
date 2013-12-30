@@ -14,6 +14,7 @@ class hmc{
     void init();
     void read();
     int getMag( char dir );
+    void stream();
     void packet();
     
   private:
