@@ -79,24 +79,19 @@ void loop() {
     digitalWrite(cled, cstate);
   }
 
-  /* Every second send the magnetometer values */
-  if(millis() % 1000 == 0){
+  /* Send sensor data at a higher rate, ~25 FPS */
+  if(millis() % 40 == 0){
 
     astate = !astate;
     digitalWrite(aled, astate);
 
     baro.read();
-    Serial.print("$BAROT,");
-    Serial.print(baro.getPressure());
-    Serial.print(",");
-    Serial.println(baro.getTemperature());
+    baro.packet();
 
     mpu.read();
     mpu.packet();
 
-    mx = mag.getMag('x');
-    my = mag.getMag('y');
-    mz = mag.getMag('z');
-    mag.packet(mx,my,mz,false);
+    mag.read();
+    mag.packet();
   }
 }

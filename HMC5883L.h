@@ -12,10 +12,15 @@ class hmc{
   public:
     hmc();
     void init();
+    void read();
     int getMag( char dir );
-    void packet( long mx, long my, long mz, bool printMagnitude );
+    void packet();
     
   private:
+    int mx;
+    int my;
+    int mz;
+    
     int HMC_ADDR;
     int CONF_A, CONF_B;
     int MODE;

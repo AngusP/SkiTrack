@@ -23,6 +23,10 @@ hmc::hmc(){
   Y1 = 0x08;
   Z0 = 0x05;
   Z1 = 0x06;
+
+  mx = 0;
+  my = 0;
+  mz = 0;
   
 }
 
@@ -40,6 +44,11 @@ void hmc::init(){
 
 
 
+void hmc::read() {
+  mx = hmc::getMag('x');
+  my = hmc::getMag('y');
+  mz = hmc::getMag('z');
+}
 
 
 
@@ -75,20 +84,14 @@ int hmc::getMag( char dir ){
 
 
 
-void hmc::packet( long mx, long my, long mz, bool printMagnitude ){
+void hmc::packet(){
   
   Serial.print("$MAGNT,");
   Serial.print(mx);
   Serial.print(",");
   Serial.print(my);
   Serial.print(",");
-  Serial.print(mz);
-  if( printMagnitude ){
-    unsigned long mv = sqrt( sq(mx) + sq(my) + sq(mz) ); 
-    Serial.print(",");
-    Serial.print(mv);
-  }
-  
+  Serial.print(mz);  
   Serial.print("\r\n");
   
 }

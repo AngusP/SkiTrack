@@ -186,10 +186,10 @@ uint16_t ms56::read16Bits(byte reg) {
 }
 
 
-int32_t ms56::getPressure() {
+int64_t ms56::getPressure() {
   return P;
 }
-int32_t ms56::getTemperature() {
+int64_t ms56::getTemperature() {
   return T;
 }
 uint32_t ms56::getRawPressure() {
@@ -197,6 +197,15 @@ uint32_t ms56::getRawPressure() {
 }
 uint32_t ms56::getRawTemperature() {
   return RT;
+}
+
+
+void ms56::packet() {
+  Serial.print("$BAROT,");
+  Serial.print((long)P); // Cut from (long long) to (long)
+  Serial.print(",");
+  Serial.print((long)T);
+  Serial.print("\r\n");
 }
 
 

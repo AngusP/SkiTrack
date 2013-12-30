@@ -70,14 +70,15 @@ class ms56 {
     int32_t pressure();
     void calculate();
     int32_t temperature();
-    int32_t getPressure();
-    int32_t getTemperature();
+    int64_t getPressure();
+    int64_t getTemperature();
     uint32_t getRawPressure();
     uint32_t getRawTemperature();
     float altitude( int32_t pressure );
     uint32_t readADC();
     uint16_t read16Bits(byte reg);
     void printConsts();
+    void packet();
     void reset();
 
   private:
